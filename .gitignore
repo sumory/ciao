@@ -1,0 +1,29 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.d
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# vim swp file
+*.swp
+
+core.*
+*.out
+*_exe
+_*.cpp
+
+build
+.DS_Store
+.vscode
+*.log
+
+
