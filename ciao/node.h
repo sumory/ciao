@@ -21,6 +21,16 @@ struct ActionHolder {
         : id(i), node(n), action_type(at), func(m) {}
 };
 
+struct ErrorActionHolder {
+    std::string id;
+    Node* node;
+    std::string action_type;
+    ErrorMiddleware func;
+
+    ErrorActionHolder(const std::string& i, Node* n, std::string at, ErrorMiddleware m)
+        : id(i), node(n), action_type(at), func(m) {}
+};
+
 struct Matched {
     Node* node;
     std::unordered_map<std::string, std::string> params;
@@ -30,7 +40,7 @@ struct Matched {
 class Node {
  private:
     Node* _use(Middleware& m);
-    Node* _error_use(Middleware& m);
+    Node* _error_use(ErrorMiddleware& m);
     Node* _handle(const std::string& method, Middleware& m);
 
  public:
@@ -46,7 +56,7 @@ class Node {
     Node* colon_child;
     std::unordered_map<std::string, std::vector<ActionHolder>> handlers;
     std::vector<ActionHolder> middlewares;
-    std::vector<ActionHolder> error_middlewares;
+    std::vector<ErrorActionHolder> error_middlewares;
     std::string regex;
 
  public:
@@ -56,7 +66,11 @@ class Node {
         colon_parent = nullptr;
         colon_child = nullptr;
         endpoint = false;
-        id = gen_random_str();
+        if (is_root) {
+            id = "root_" + gen_random_str();
+        } else {
+            id = "node_" + gen_random_str();
+        }
     }
 
     Node(bool root, int unique_id) {
@@ -65,10 +79,13 @@ class Node {
         colon_parent = nullptr;
         colon_child = nullptr;
         endpoint = false;
-
-        std::ostringstream oss;
-        oss << gen_random_str() << "_" << unique_id;
-        id = oss.str();
+        if (is_root) {
+            id = "root_" + std::to_string(unique_id);
+        } else {
+            std::ostringstream oss;
+            oss << "node_" << gen_random_str() << "_" << unique_id;
+            id = oss.str();
+        }
     }
 
     ~Node() {
@@ -85,8 +102,8 @@ class Node {
     bool find_handler(const std::string& method);
     Node* use(Middleware m);
     Node* use(std::vector<Middleware> ms);
-    Node* error_use(Middleware m);
-    Node* error_use(std::vector<Middleware> ms);
+    Node* error_use(ErrorMiddleware m);
+    Node* error_use(std::vector<ErrorMiddleware> ms);
     Node* handle(const std::string& method, Middleware m);
     Node* handle(const std::string& method, std::vector<Middleware> ms);
 };

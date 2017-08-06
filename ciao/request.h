@@ -19,11 +19,11 @@ class Request {
 
     Request() {}
     virtual ~Request() = default;
-    virtual bool build(void* data) = 0;
+    virtual bool build(void* data) { return true; };
 
     bool is_found() { return _found; }
 
-    void set_found(found) { _found = found; }
+    void set_found(bool found) { _found = found; }
 };
 
 }  // namespace ciao

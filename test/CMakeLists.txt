@@ -1,4 +1,4 @@
-file(GLOB ciao_unittest_SRCS *_test.cc trie/*_test.cc)
+file(GLOB ciao_unittest_SRCS *_test.cc trie/*_test.cc app/*_test.cc)
 include_directories(${PROJECT_SOURCE_DIR}/)
 
 add_executable(ciao_unittest ${ciao_unittest_SRCS})

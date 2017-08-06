@@ -11,14 +11,14 @@ class Response {
     std::string _view;
 
  public:
-    Request() {}
-    virtual ~Request() = default;
-    virtual response(std::string data) {
+    Response() {}
+    virtual ~Response() = default;
+    virtual void response(std::string data) {
         _http_status = _http_status == 0 ? 200 : _http_status;
         std::cout << data << std::endl;
     }
 
-    void set_header(std::string key, string : string value) { _headers[key] = value; }
+    void set_header(std::string key, std::string value) { _headers[key] = value; }
 
     std::string get_header(std::string key) {
         if (_headers.find(key) != _headers.end()) {
@@ -28,7 +28,10 @@ class Response {
         }
     }
 
-    void status(int status) { _http_status = status; }
+    Response& status(int status) {
+        _http_status = status;
+        return *this;
+    }
 
     void render(std::string view_file, void* data) {
         // TODO not implements

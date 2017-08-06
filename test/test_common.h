@@ -25,3 +25,11 @@ class UtilsTest : public CiaoTest {
     static void SetUpTestCase() {}
     static void TearDownTestCase() {}
 };
+
+class AppTest : public CiaoTest {
+ public:
+    virtual void SetUp() {}
+    virtual void TearDown() {}
+    static void SetUpTestCase() {}
+    static void TearDownTestCase() {}
+};

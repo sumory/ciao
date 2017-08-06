@@ -12,6 +12,7 @@ std::unordered_map<std::string, bool> supported_http_methods({
     {"get", true},
     {"put", true},
     {"post", true},
+    {"patch", true},
     {"delete", true},
     {"head", true},
     {"options", true},

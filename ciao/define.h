@@ -38,7 +38,10 @@ extern std::unordered_map<std::string, bool> supported_http_methods;
 class Request;
 class Response;
 
-typedef std::function<void(std::string err)> Next;
-typedef std::function<void(Request req, Response res, Next next)> Middleware;
+// err不为空则出错
+typedef std::function<void(const std::string& err)> Next;
+typedef std::function<void(Request& req, Response& res, Next& next)> Middleware;
+typedef std::function<void(const std::string& err, Request& req, Response& res, Next& next)>
+    ErrorMiddleware;
 
 }  // namespace ciao
