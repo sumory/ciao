@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SUBDIRS="ciao ciao/* ciao/*/* ciao/*/*/* test test/*"
+SUBDIRS="ciao ciao/* ciao/*/* ciao/*/*/* test test/* examples/*"
 FILETYPES="*.hpp *.h *.cpp *.c *.cc"
 CLANG_FORMAT="clang-format"
 

@@ -4,23 +4,25 @@
 namespace ciao {
 
 class Response {
- private:
+ protected:
     int _http_status;
     std::unordered_map<std::string, std::string> _headers;
     std::string _body;
     std::string _view;
 
  public:
-    Response() {}
+    Response() {
+        _http_status = -1;
+        set_header("Powered By", "ciao");
+    }
     virtual ~Response() = default;
-    virtual void response(std::string data) {
-        _http_status = _http_status == 0 ? 200 : _http_status;
-        std::cout << data << std::endl;
+    virtual void response(const std::string& data) {
+        _http_status = _http_status == -1 ? 200 : _http_status;
     }
 
     void set_header(std::string key, std::string value) { _headers[key] = value; }
 
-    std::string get_header(std::string key) {
+    std::string get_header(const std::string& key) {
         if (_headers.find(key) != _headers.end()) {
             return _headers[key];
         } else {
@@ -33,30 +35,26 @@ class Response {
         return *this;
     }
 
-    void render(std::string view_file, void* data) {
+    int get_status() { return _http_status; }
+
+    void render(const std::string& view_file, void* data) {
         // TODO not implements
         return;
     }
 
-    void html(std::string data) {
+    void html(const std::string& data) {
         set_header("Content-Type", "text/html; charset=UTF-8");
         response(data);
     }
 
-    void send(std::string data) {
+    void send(const std::string& data) {
         set_header("Content-Type", "text/plain; charset=UTF-8");
         response(data);
     }
 
-    void json(std::string data) {
+    void json(const std::string& data) {
         set_header("Content-Type", "application/json; charset=utf-8");
         response(data);
-    }
-
-    // TODO
-    void json(void* data) {
-        set_header("Content-Type", "application/json; charset=utf-8");
-        response("NOT IMPLEMENTS!");
     }
 };
 

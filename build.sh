@@ -22,12 +22,21 @@ if [ $? -ne 0 ]; then
     exit 3
 fi
 
-showinfo "Running tests ..."
-./bin/ciao_unittest
-if [ $? -ne 0 ]; then
-    error "Error: there are failed tests!"
-    exit 4
-fi
+case $1 in 
+    with-test) 
+        showinfo "Running tests ..."
+        ./bin/ciao_unittest
+        if [ $? -ne 0 ]; then
+            error "Error: there are failed tests!"
+            exit 4
+        fi
+    ;; 
+    *) 
+    line ""
+    ;; 
+esac 
+
+
 
 line ""
 tip "[Result]:"

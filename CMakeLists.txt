@@ -23,8 +23,8 @@ set (CXX_FLAGS
         -Wall
         -Wno-unused-parameter
         -Wno-unused-function
-        -Wunused-variable
-        -Wunused-value
+        -Wno-unused-variable
+        -Wno-unused-value
         -Wshadow
         -Wcast-qual
         -Wcast-align
@@ -35,15 +35,16 @@ set (CXX_FLAGS
         -Wfloat-equal
         -Wextra
         -std=c++11
+        -levpp
+        -levent
 )
 
-include_directories (${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/3rdparty)
+include_directories (${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/3rdparty/evpp)
 link_directories (${PROJECT_SOURCE_DIR}/libs)
 
 string (REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")
 
-SET(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g -ggdb -D_DEBUG -DGOOGLE_STRIP_LOG=0 -ftest-coverage")
-SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -g -ggdb -DNDEBUG -DGOOGLE_STRIP_LOG=1")
+
 SET(DEPENDENT_LIBRARIES glog pthread)
 set (CMAKE_MACOSX_RPATH 0)
 
@@ -58,3 +59,4 @@ message (STATUS "LIBRARY_OUTPUT_PATH " ${LIBRARY_OUTPUT_PATH})
 
 add_subdirectory (ciao)
 add_subdirectory (test)
+add_subdirectory (examples)

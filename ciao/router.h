@@ -104,6 +104,7 @@ class Router {
         }
 
         if (matched_handlers.size() == 0) {
+            res.status(404);
             error_handle("Oh! no handler to process method:" + method, req, res, trie.root, done);
             return;
         }
@@ -111,6 +112,7 @@ class Router {
         std::vector<ActionHolder> stack;  // an array actually, not a real `stack`
         stack = compose_func(matched, method);
         if (stack.size() == 0) {
+            res.status(404);
             error_handle("Oh! no handlers found.", req, res, trie.root, done);
             return;
         }
@@ -122,17 +124,20 @@ class Router {
 
         size_t idx = 0;
         Next next = [&, this](const std::string& err) {
+            std::cout << "next, idx:" << idx << " stack_len:" << stack_len << " err:" << err
+                      << std::endl;
+
             if (!err.empty()) {
                 this->error_handle(err, req, res, stack[idx].node, done);
                 return;
             }
 
             if (idx > stack_len) {
+                std::cout << "1. idx>stack_len" << std::endl;
                 done(err);  // err is nil or not
                 return;
             }
 
-            idx++;
             ActionHolder& handler = stack[idx];
 
             bool result = false;
@@ -155,6 +160,8 @@ class Router {
                 this->error_handle(err_msg, req, res, handler.node, done);
                 return;
             }
+
+            idx++;
         };
 
         next("");
@@ -164,19 +171,23 @@ class Router {
     void error_handle(std::string err_msg, Request& req, Response& res, Node* node, Next& done) {
         std::vector<ErrorActionHolder> stack = compose_error_handler(node);
         if (stack.size() == 0) {
+            std::cout << "-- error stack is 0, done directly" << std::endl;
             done(err_msg);
             return;
         }
 
         size_t idx = 0;
         size_t stack_len = stack.size();
-        Next next = [&, this](const std::string& err) {
+        Next next = [&](const std::string& err) {
+            std::cout << "err_next, idx:" << idx << " stack_len:" << stack_len << " err:" << err
+                      << std::endl;
+
             if (idx >= stack_len) {
+                std::cout << "2. idx>stack_len" << std::endl;
                 done(err);  // err is nil or not
                 return;
             }
-
-            idx++;
+            
             ErrorActionHolder& error_handler = stack[idx];
             bool result = false;
             std::string _err;
@@ -197,6 +208,8 @@ class Router {
                 done(_err);
                 return;
             }
+
+            idx++;
         };
 
         next(err_msg);
