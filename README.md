@@ -14,6 +14,7 @@ int main(int argc, char* argv[]) {
     app.get("/", [](ciao::Request& req, ciao::Response& res, ciao::Next& next){
         res.send("hello world!");
     });
+    app.listen(8080).run();
     return 0;
 }
 ```
