@@ -18,13 +18,15 @@ class Request {
     std::string origin_uri;
     std::string uri;
     std::string body;
+    std::string raw_body;
 
     Request() { _found = false; }
     virtual ~Request() = default;
-    virtual std::string get_header(std::string key) = 0;
-    virtual std::string get_query(std::string key) = 0;
-    virtual std::string get_body(std::string key) = 0;
-    virtual std::string get_params(std::string key) = 0;
+    virtual std::string get_header(const std::string& key) = 0;
+    virtual std::string get_query(const std::string& key) = 0;
+    virtual std::string get_body(const std::string& key) = 0;
+    virtual std::string get_raw_body() = 0;
+    virtual std::string get_params(const std::string& key) = 0;
     virtual std::string to_string() = 0;
 
     bool is_found() { return _found; }

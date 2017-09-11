@@ -10,6 +10,7 @@ namespace ciao {
 class EvppRequest : public Request {
  private:
     evpp::http::ContextPtr _ctx;
+    std::string _body;
 
  public:
     explicit EvppRequest(const evpp::http::ContextPtr& ctx) : Request(), _ctx(ctx) {
@@ -50,22 +51,62 @@ class EvppRequest : public Request {
         url = ctx->original_uri();
         origin_uri = ctx->original_uri();
         uri = ctx->uri();
-        body = ctx->body().ToString();
+        _body = ctx->body().ToString();
     }
 
-    std::string get_header(std::string key) {
+    std::string get_header(const std::string& key) {
         if (key.empty()) return "";
         return _ctx->FindRequestHeader(key.c_str());
     }
 
-    std::string get_query(std::string key) {
+    std::string get_query(const std::string& key) {
         if (key.empty()) return "";
         return _ctx->GetQuery(key);
     }
 
-    std::string get_body(std::string key) { return body; }
+    std::string get_raw_body() { return _body; }
 
-    std::string get_params(std::string key) {
+    std::string get_body(const std::string& key) {
+        static const std::string s_nullptr = "";
+        if (key.empty()) return s_nullptr;
+
+        const char* body = _body.c_str();
+        size_t body_len = _body.size();
+        size_t key_len = key.size();
+
+        // Find query start point
+        for (const char* p = body; p < body + body_len;) {
+            size_t index = 0;
+            for (; index < key_len; ++index) {
+                if (p[index] != key[index]) {
+                    break;
+                }
+            }
+
+            if (index == key_len && p[key_len] == '=') {
+                // Found the key
+                const char* v = p + key_len + 1;
+                const char* end = strchr(const_cast<char*>(v), '&');
+                if (!end) {
+                    return v;
+                } else {
+                    return std::string(v, end);
+                }
+            }
+
+            // Skip to next query
+            p += index;
+            p = strchr(const_cast<char*>(p), '&');
+            if (!p) {
+                return s_nullptr;
+            }
+            p += 1;
+        }
+
+        return s_nullptr;
+    }
+
+    std::string get_params(const std::string& key) {
         if (key.empty() || params.find(key) == params.end()) {
             return "";
         } else {

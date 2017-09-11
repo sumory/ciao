@@ -15,7 +15,9 @@ class Response {
         _http_status = -1;
         set_header("Powered By", "ciao");
     }
+
     virtual ~Response() = default;
+
     virtual void response(const std::string& data) {
         _http_status = _http_status == -1 ? 200 : _http_status;
     }

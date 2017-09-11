@@ -116,14 +116,13 @@ class Router {
             return;
         }
 
-        size_t stack_len = stack.size();
         req.set_found(true);
         std::unordered_map<std::string, std::string> parsed_params = matched.params;
         req.params = parsed_params;
 
-        int idx = 0;
-        Next next;
-        next = [&](const std::string& err) {
+        size_t idx = 0;
+        size_t stack_len = stack.size();
+        Next next = [&](const std::string& err) {
             std::cout << "next, idx:" << idx << " stack_len:" << stack_len << " err:" << err
                       << std::endl;
 
