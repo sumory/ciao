@@ -19,8 +19,6 @@ endif()
 
 set (CXX_FLAGS
         -std=c++11
-        -levpp
-        -levent
         -O3
         -g
         -Wall
@@ -41,7 +39,7 @@ link_directories (${PROJECT_SOURCE_DIR}/libs)
 string (REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")
 
 
-SET(DEPENDENT_LIBRARIES pthread)
+SET(DEPENDENT_LIBRARIES evpp event pthread)
 set (CMAKE_MACOSX_RPATH 0)
 
 set (EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
