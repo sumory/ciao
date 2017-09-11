@@ -18,25 +18,18 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 set (CXX_FLAGS
-        -g
-        -fPIC
-        -Wall
-        -Wno-unused-parameter
-        -Wno-unused-function
-        -Wno-unused-variable
-        -Wno-unused-value
-        -Wshadow
-        -Wcast-qual
-        -Wcast-align
-        -Wwrite-strings
-        -Wsign-compare
-        -Winvalid-pch
-        -fms-extensions
-        -Wfloat-equal
-        -Wextra
         -std=c++11
         -levpp
         -levent
+        -O3
+        -g
+        -Wall
+        -Wextra
+        -Wno-unused-local-typedefs
+        -Wno-unused-function
+        -Wno-unused-parameter
+        -Wno-unused-variable
+        -Wno-comment
 )
 
 include_directories (${PROJECT_SOURCE_DIR})
@@ -48,7 +41,7 @@ link_directories (${PROJECT_SOURCE_DIR}/libs)
 string (REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")
 
 
-SET(DEPENDENT_LIBRARIES glog pthread)
+SET(DEPENDENT_LIBRARIES pthread)
 set (CMAKE_MACOSX_RPATH 0)
 
 set (EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
