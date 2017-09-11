@@ -63,11 +63,19 @@ int main(int argc, char* argv[]) {
         res.send(oss.str());
     });
 
-    // post请求示例
+    // post请求示例 http://localhost:9000/post?find=name
     app.post("/post", [](Request& req, Response& res, Next& next) {
+        std::string find = req.get_query("find");  //  查找`请求体`里的字段
+        if (find.empty()) {
+            find = "id";
+        }
+
         std::ostringstream oss;
-        std::string body = req.get_body("id");
-        oss << "Post test, API: " << req.uri << std::endl << " body: " << body;
+        std::string raw_body = req.get_raw_body();
+        std::string id = req.get_body(find);
+        oss << "Post test, API: " << req.uri << std::endl
+            << " body[" << find << "]: " << id << std::endl
+            << " raw_body: " << raw_body;
         res.send(oss.str());
     });
 
