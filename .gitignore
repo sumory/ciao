@@ -26,3 +26,4 @@ build
 .vscode
 *.log
 3rdparty/evpp
+3rdparty/rapidjson

@@ -90,7 +90,6 @@ class Router {
 
         Matched matched = trie.match(path);
         Node* matched_node = matched.node;
-
         if (method.empty() || !matched_node) {
             res.status(404);
             error_handle("404! not found.", req, res, trie.root, done);
@@ -122,13 +121,14 @@ class Router {
         std::unordered_map<std::string, std::string> parsed_params = matched.params;
         req.params = parsed_params;
 
-        size_t idx = 0;
-        Next next = [&, this](const std::string& err) {
+        int idx = 0;
+        Next next;
+        next = [&](const std::string& err) {
             std::cout << "next, idx:" << idx << " stack_len:" << stack_len << " err:" << err
                       << std::endl;
 
             if (!err.empty()) {
-                this->error_handle(err, req, res, stack[idx].node, done);
+                error_handle(err, req, res, stack[idx].node, done);
                 return;
             }
 
@@ -139,6 +139,7 @@ class Router {
             }
 
             ActionHolder& handler = stack[idx];
+            idx++;  // should not place it at the end!
 
             bool result = false;
             std::string err_msg;
@@ -157,11 +158,9 @@ class Router {
             }
 
             if (!result) {
-                this->error_handle(err_msg, req, res, handler.node, done);
+                error_handle(err_msg, req, res, handler.node, done);
                 return;
             }
-
-            idx++;
         };
 
         next("");
@@ -187,8 +186,10 @@ class Router {
                 done(err);  // err is nil or not
                 return;
             }
-            
+
             ErrorActionHolder& error_handler = stack[idx];
+            idx++;
+
             bool result = false;
             std::string _err;
             try {
@@ -208,8 +209,6 @@ class Router {
                 done(_err);
                 return;
             }
-
-            idx++;
         };
 
         next(err_msg);

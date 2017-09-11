@@ -14,10 +14,10 @@
 #include <vector>
 #include "ciao/config.h"
 
-#define CIAO_DEBUG(str) std::cout << "[DEBUG]" << str << std::endl;
-#define CIAO_INFO(str) std::cout << "[INFO]" << str << std::endl;
-#define CIAO_WARN(str) std::cout << "[WARN]" << str << std::endl;
-#define CIAO_ERROR(str) std::cout << "[ERROR]" << str << std::endl;
+#define CIAO_DEBUG(str) std::cout << "[DEBUG] " << str << std::endl;
+#define CIAO_INFO(str) std::cout << "[INFO] " << str << std::endl;
+#define CIAO_WARN(str) std::cout << "[WARN] " << str << std::endl;
+#define CIAO_ERROR(str) std::cout << "[ERROR] " << str << std::endl;
 
 #define CIAO_GODIE(str)                             \
     do {                                            \

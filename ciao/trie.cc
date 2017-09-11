@@ -153,6 +153,7 @@ Matched Trie::_match(std::string path) {
 
     bool flag = true;  // whether to continue to find matched node or not
     Matched matched;
+    matched.node = nullptr;  // important! explicitly
     Node* parent = root;
     FallbackStack fallback_stack;
 

@@ -39,7 +39,10 @@ set (CXX_FLAGS
         -levent
 )
 
-include_directories (${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/3rdparty/evpp)
+include_directories (${PROJECT_SOURCE_DIR})
+include_directories (${PROJECT_SOURCE_DIR}/3rdparty/evpp)
+include_directories (${PROJECT_SOURCE_DIR}/3rdparty/rapidjson/include)
+
 link_directories (${PROJECT_SOURCE_DIR}/libs)
 
 string (REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")

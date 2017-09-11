@@ -126,7 +126,7 @@ class App {
         }
     }
 
-    App& use(const std::string& path, Middleware& m) {
+    App& use(const std::string& path, Middleware m) {
         router->use(path, m);
         return *this;
     }
