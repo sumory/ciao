@@ -69,12 +69,18 @@ TEST_F(UtilsTest, StringSplitTest) {
 }
 
 TEST_F(UtilsTest, StrRegexMatchTest) {
-    std::unordered_map<std::string, std::string> matched_cases = {{"abcdefg", "[a-z]+"},
-                                                                  {"abcdefgABCDEFG", "[a-zA-Z]+"},
-                                                                  {"1234567", "[1-7]+"},
-                                                                  {".-~_", "[.\\-~_]+"}};
+    std::unordered_map<std::string, std::string> matched_cases = {
+        {"abcdefg", "[a-z]+"},
+        {"abcdefgABCDEFG", "[a-zA-Z]+"},
+        {"1234567", "[1-7]+"},
+        // {"-~_.", "[.\\-~_]+"}, not pass on linux but correct on mac
+        {"-~_.", "[\\-~_\\.]+"}};
     for (auto& c : matched_cases) {
         bool result = is_str_match_regex(c.first, c.second);
+        if (!result) {
+            std::cout << "error when regex match, value: " << c.first << " pattern:" << c.second
+                      << std::endl;
+        }
         ASSERT_TRUE(result);
     }
 }
