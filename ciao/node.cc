@@ -60,7 +60,7 @@ Node* Node::error_use(std::vector<ErrorMiddleware> ms) {
     return this;
 }
 
-Node* Node::_handle(const std::string& method, Middleware& m) {}
+Node* Node::_handle(const std::string& method, Middleware& m) { return nullptr; }
 
 Node* Node::handle(const std::string& method, Middleware m) {
     std::string s = string_to_lower(method);
