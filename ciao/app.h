@@ -8,6 +8,9 @@
 namespace ciao {
 
 class App {
+ private:
+    std::shared_ptr<evpp::http::Server> _evpp_server;
+
  public:
     std::string ciao_build_time;
     std::string app_start_time;
@@ -16,35 +19,9 @@ class App {
     Next done;
     int http_port;
     std::string driver;
+    std::string version;
 
- public:
-    App() {
-        extern std::string CIAO_BUILD_TIME;
-        ciao_build_time = CIAO_BUILD_TIME;
-        app_start_time = get_current_datetime();
-        router = new Router();
-        // default config
-        driver = "evpp";
-    }
-
-    explicit App(std::unordered_map<std::string, std::string> s) : settings(s) {
-        extern std::string CIAO_BUILD_TIME;
-        ciao_build_time = CIAO_BUILD_TIME;
-        app_start_time = get_current_datetime();
-        router = new Router();
-        // default config
-        driver = "evpp";
-    }
-
-    ~App() { delete router; }
-
-    void set_driver(std::string driver_name) { driver = driver_name; }
-
-    bool set_settings(const std::string& key, const std::string& value) {
-        settings[key] = value;
-        return true;
-    }
-
+ private:
     void _evpp_run() {
         std::vector<int> ports = {};
         ports.push_back(http_port);
@@ -55,31 +32,25 @@ class App {
                 thread_num = tmp;
             }
         }
-        evpp::http::Server server(thread_num);
-        server.SetThreadDispatchPolicy(evpp::ThreadDispatchPolicy::kIPAddressHashing);
-        server.RegisterDefaultHandler([&](evpp::EventLoop* loop, const evpp::http::ContextPtr& ctx,
-                                          const evpp::http::HTTPSendResponseCallback& cb) {
+        _evpp_server = std::make_shared<evpp::http::Server>(thread_num);
+        _evpp_server->SetThreadDispatchPolicy(evpp::ThreadDispatchPolicy::kIPAddressHashing);
+        _evpp_server->RegisterDefaultHandler([&](evpp::EventLoop* loop,
+                                                 const evpp::http::ContextPtr& ctx,
+                                                 const evpp::http::HTTPSendResponseCallback& cb) {
             EvppRequest req(ctx);
             EvppResponse res(ctx, cb);
             _run(req, res);
         });
-        server.Init(ports);
-        server.Start();
-        while (!server.IsStopped()) {
+        _evpp_server->Init(ports);
+        _evpp_server->Start();
+        while (!_evpp_server->IsStopped()) {
             usleep(1);
         }
     }
 
-    App& listen(int port) {
-        http_port = port;
-        return *this;
-    }
-
-    void run() {
-        if (driver == "evpp") {
-            _evpp_run();
-        } else {
-            CIAO_GODIE("no driver was set!");
+    void _evpp_stop() {
+        if (_evpp_server) {
+            _evpp_server->Stop();
         }
     }
 
@@ -101,6 +72,67 @@ class App {
     void _run(Request& req, Response& res, Next& final_handler) {
         done = final_handler;
         handle(req, res);
+    }
+
+ public:
+    App() {
+        extern std::string CIAO_BUILD_TIME;
+        ciao_build_time = CIAO_BUILD_TIME;
+        app_start_time = get_current_datetime();
+        version = std::to_string(CIAO_VERSION_MAJOR) + "." + std::to_string(CIAO_VERSION_MINOR) +
+                  "." + std::to_string(CIAO_VERSION_PATCH);
+        router = new Router();
+        // default config
+        driver = "evpp";
+    }
+
+    explicit App(std::unordered_map<std::string, std::string> s) : settings(s) {
+        extern std::string CIAO_BUILD_TIME;
+        ciao_build_time = CIAO_BUILD_TIME;
+        app_start_time = get_current_datetime();
+        version = std::to_string(CIAO_VERSION_MAJOR) + "." + std::to_string(CIAO_VERSION_MINOR) +
+                  "." + std::to_string(CIAO_VERSION_PATCH);
+        router = new Router();
+        // default config
+        driver = "evpp";
+    }
+
+    ~App() {
+        if (router) delete router;
+    }
+
+    void set_driver(std::string driver_name) { driver = driver_name; }
+
+    bool set_settings(const std::string& key, const std::string& value) {
+        settings[key] = value;
+        return true;
+    }
+
+    App& listen(int port) {
+        http_port = port;
+        return *this;
+    }
+
+    void run() {
+        if (driver == "evpp") {
+            _evpp_run();
+        } else {
+            CIAO_GODIE("no driver was set!");
+        }
+    }
+
+    bool stop(bool delete_router = false) {
+        if (delete_router) {
+            delete router;
+        }
+
+        if (driver == "evpp") {
+            _evpp_stop();
+        } else {
+            CIAO_GODIE("no driver was set!");
+        }
+
+        return true;
     }
 
     void handle(Request& req, Response& res) {
