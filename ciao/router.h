@@ -9,55 +9,6 @@
 
 namespace ciao {
 
-std::vector<ActionHolder> compose_func(Matched& matched, const std::string& method) {
-    std::vector<ActionHolder> stack;
-
-    Node* exact_node = matched.node;
-    if (!exact_node) {
-        return stack;
-    }
-
-    std::vector<Node*> pipeline = matched.pipeline;
-    if (pipeline.size() == 0) {
-        return stack;
-    }
-
-    for (size_t i = 0; i < pipeline.size(); i++) {
-        Node* p = pipeline[i];
-        std::vector<ActionHolder> middlewares = p->middlewares;
-        for (ActionHolder& ah : middlewares) {
-            stack.push_back(ah);
-        }
-
-        std::unordered_map<std::string, std::vector<ActionHolder>> handlers = p->handlers;
-
-        // TODO: id must be unique!
-        if (p->id == exact_node->id && handlers.find(method) != handlers.end()) {
-            std::vector<ActionHolder>& hs = handlers[method];
-            for (ActionHolder& ah : hs) {
-                stack.push_back(ah);
-            }
-        }
-    }
-
-    return stack;
-}
-
-std::vector<ErrorActionHolder> compose_error_handler(Node* node) {
-    std::vector<ErrorActionHolder> stack;
-    if (!node) {
-        return stack;
-    }
-
-    while (node) {
-        for (ErrorActionHolder& ah : node->error_middlewares) {
-            stack.push_back(ah);
-        }
-        node = node->parent;
-    }
-    return stack;
-}
-
 class Router {
  public:
     std::string name;
@@ -275,6 +226,55 @@ class Router {
         Node* node = trie.add_node(path);
         node->handle(method, ms);
         return this;
+    }
+
+    std::vector<ActionHolder> compose_func(Matched& matched, const std::string& method) {
+        std::vector<ActionHolder> stack;
+
+        Node* exact_node = matched.node;
+        if (!exact_node) {
+            return stack;
+        }
+
+        std::vector<Node*> pipeline = matched.pipeline;
+        if (pipeline.size() == 0) {
+            return stack;
+        }
+
+        for (size_t i = 0; i < pipeline.size(); i++) {
+            Node* p = pipeline[i];
+            std::vector<ActionHolder> middlewares = p->middlewares;
+            for (ActionHolder& ah : middlewares) {
+                stack.push_back(ah);
+            }
+
+            std::unordered_map<std::string, std::vector<ActionHolder>> handlers = p->handlers;
+
+            // TODO: id must be unique!
+            if (p->id == exact_node->id && handlers.find(method) != handlers.end()) {
+                std::vector<ActionHolder>& hs = handlers[method];
+                for (ActionHolder& ah : hs) {
+                    stack.push_back(ah);
+                }
+            }
+        }
+
+        return stack;
+    }
+
+    std::vector<ErrorActionHolder> compose_error_handler(Node* node) {
+        std::vector<ErrorActionHolder> stack;
+        if (!node) {
+            return stack;
+        }
+
+        while (node) {
+            for (ErrorActionHolder& ah : node->error_middlewares) {
+                stack.push_back(ah);
+            }
+            node = node->parent;
+        }
+        return stack;
     }
 
     // basic methods start...
