@@ -46,11 +46,14 @@ class App {
         while (!_evpp_server->IsStopped()) {
             usleep(1);
         }
+        CIAO_INFO("evpp_run touches end!");
     }
 
     void _evpp_stop() {
         if (_evpp_server) {
+            CIAO_INFO("evpp server is to stop!");
             _evpp_server->Stop();
+            _evpp_server = nullptr;
         }
     }
 
@@ -124,6 +127,7 @@ class App {
     bool stop(bool delete_router = false) {
         if (delete_router) {
             delete router;
+            router = nullptr;
         }
 
         if (driver == "evpp") {

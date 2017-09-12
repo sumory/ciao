@@ -38,5 +38,3 @@ std::string& string_replace_recursion(std::string& str, const std::string& old_v
                                       const std::string& new_value);
 
 std::string slim_path(std::string path);
-
-bool get_avaliable_port(uint32_t& port);

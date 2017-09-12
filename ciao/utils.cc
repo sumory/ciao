@@ -1,10 +1,4 @@
 #include "ciao/utils.h"
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
 #include <iostream>
 
 const std::string get_current_datetime(time_t ts) {
@@ -126,31 +120,4 @@ std::string slim_path(std::string path) {
     if (path.empty()) return path;
     std::string result = string_replace_recursion(path, "//", "/");
     return result;
-}
-
-bool get_avaliable_port(uint32_t& port) {
-    int sock = socket(AF_INET, SOCK_STREAM, 0);
-
-    struct sockaddr_in addr;
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-    addr.sin_port = 0;
-
-    int ret = ::bind(sock, (struct sockaddr*)&addr, sizeof addr);
-    if (0 != ret) {
-        close(sock);
-        return false;
-    }
-
-    struct sockaddr_in connAddr;
-    socklen_t len = sizeof connAddr;
-    ret = getsockname(sock, (struct sockaddr*)&connAddr, &len);
-
-    if (0 != ret) {
-        close(sock);
-        return false;
-    }
-
-    port = ntohs(connAddr.sin_port);
-    return true;
 }

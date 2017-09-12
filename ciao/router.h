@@ -16,7 +16,7 @@ class Router {
 
  public:
     Router(std::string n = "", bool ignore_case = true, bool strict_route = true,
-           std::string segment_pattern = "[A-Za-z0-9._~\\-]+", int max_uri_segments = 100,
+           std::string segment_pattern = "[A-Za-z0-9\\._~\\-]+", int max_uri_segments = 100,
            int max_fallback_depth = 100)
         : name(n),
           trie(ignore_case, strict_route, segment_pattern, max_uri_segments, max_fallback_depth) {
@@ -74,8 +74,8 @@ class Router {
         size_t idx = 0;
         size_t stack_len = stack.size();
         Next next = [&](const std::string& err) {
-            std::cout << "next, idx:" << idx << " stack_len:" << stack_len << " err:" << err
-                      << std::endl;
+            CIAO_DEBUG("next, idx:" + std::to_string(idx) +
+                       " stack_len:" + std::to_string(stack_len) + " err:" + err);
 
             if (!err.empty()) {
                 error_handle(err, req, res, stack[idx].node, done);
@@ -83,7 +83,6 @@ class Router {
             }
 
             if (idx > stack_len) {
-                std::cout << "1. idx>stack_len" << std::endl;
                 done(err);  // err is nil or not
                 return;
             }
@@ -120,7 +119,6 @@ class Router {
     void error_handle(std::string err_msg, Request& req, Response& res, Node* node, Next& done) {
         std::vector<ErrorActionHolder> stack = compose_error_handler(node);
         if (stack.size() == 0) {
-            std::cout << "-- error stack is 0, done directly" << std::endl;
             done(err_msg);
             return;
         }
@@ -128,11 +126,10 @@ class Router {
         size_t idx = 0;
         size_t stack_len = stack.size();
         Next next = [&](const std::string& err) {
-            std::cout << "err_next, idx:" << idx << " stack_len:" << stack_len << " err:" << err
-                      << std::endl;
+            CIAO_DEBUG("err_next, idx:" + std::to_string(idx) +
+                       " stack_len:" + std::to_string(stack_len) + " err:" + err);
 
             if (idx >= stack_len) {
-                std::cout << "2. idx>stack_len" << std::endl;
                 done(err);  // err is nil or not
                 return;
             }

@@ -91,9 +91,9 @@ class Node {
     ~Node() {
         // TODO: check
         // std::cout << "release node: " << id << std::endl;
-        delete colon_child;
+        if (colon_child) delete colon_child;
         for (auto& nh : children) {
-            delete nh.val;
+            if (nh.val) delete nh.val;
         }
     }
 
