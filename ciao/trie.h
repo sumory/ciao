@@ -1,3 +1,4 @@
+#pragma once
 #include "ciao/define.h"
 #include "ciao/node.h"
 #include "ciao/utils.h"
