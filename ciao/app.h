@@ -2,6 +2,7 @@
 #include "ciao/define.h"
 #include "ciao/evpp_driver/evpp_request.h"
 #include "ciao/evpp_driver/evpp_response.h"
+#include "ciao/group.h"
 #include "ciao/router.h"
 #include "ciao/utils.h"
 
@@ -117,6 +118,7 @@ class App {
     }
 
     void run() {
+        CIAO_INFO("server is starting on port " + std::to_string(http_port));
         if (driver == "evpp") {
             _evpp_run();
         } else {
@@ -155,8 +157,6 @@ class App {
             result = false;
         }
 
-        std::cout << "handle->result:" << result << std::endl;
-
         if (!result) {
             done(_err);
         }
@@ -169,6 +169,23 @@ class App {
 
     App& use(const std::string& path, std::vector<Middleware> ms) {
         router->use(path, ms);
+        return *this;
+    }
+
+    App& use(const std::string& prefix_path, Group& g) {
+        if (prefix_path.empty()) {
+            CIAO_ERROR("prefix should not be empty for `group` router");
+            return *this;
+        }
+
+        for (const GroupMethodHolder& gmh : g.get_apis()) {
+            if (gmh.path.empty()) {  // group root route
+                router->_init_basic_method(gmh.method, prefix_path, gmh.ms);
+                continue;
+            }
+            std::string final_path = slim_path(prefix_path + "/" + gmh.path);
+            router->_init_basic_method(gmh.method, final_path, gmh.ms);
+        }
         return *this;
     }
 

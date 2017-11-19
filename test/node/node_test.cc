@@ -1,7 +1,7 @@
 #include "ciao/node.h"
 #include "test/test_common.h"
 
-TEST_F(CiaoTest, NodeBasicTest) {
+TEST_F(NodeTest, NodeBasicTest) {
     ciao::Node node(false);
 
     ASSERT_FALSE(node.is_root);
