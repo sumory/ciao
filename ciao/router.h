@@ -209,9 +209,6 @@ class Router {
         return this;
     }
 
-    // TODO: WIP
-    Router* use(const std::string& path, Group& g) { return this; }
-
     Router* app_route(const std::string& method, const std::string& path, Middleware& m) {
         Node* node = trie.add_node(path);
         node->handle(method, m);

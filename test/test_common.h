@@ -10,6 +10,30 @@ class CiaoTest : public testing::Test {
     static void TearDownTestCase() {}
 };
 
+class AppTest : public CiaoTest {
+ public:
+    virtual void SetUp() {}
+    virtual void TearDown() {}
+    static void SetUpTestCase() {}
+    static void TearDownTestCase() {}
+};
+
+class GroupTest : public CiaoTest {
+ public:
+    virtual void SetUp() {}
+    virtual void TearDown() {}
+    static void SetUpTestCase() {}
+    static void TearDownTestCase() {}
+};
+
+class NodeTest : public CiaoTest {
+ public:
+    virtual void SetUp() {}
+    virtual void TearDown() {}
+    static void SetUpTestCase() {}
+    static void TearDownTestCase() {}
+};
+
 class TrieTest : public CiaoTest {
  public:
     virtual void SetUp() {}
@@ -19,14 +43,6 @@ class TrieTest : public CiaoTest {
 };
 
 class UtilsTest : public CiaoTest {
- public:
-    virtual void SetUp() {}
-    virtual void TearDown() {}
-    static void SetUpTestCase() {}
-    static void TearDownTestCase() {}
-};
-
-class AppTest : public CiaoTest {
  public:
     virtual void SetUp() {}
     virtual void TearDown() {}
