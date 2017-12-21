@@ -375,4 +375,52 @@ void Trie::set_segment_pattern(std::string v) {
     _uri_segment_pattern = std::regex(v);
 }
 
+void Trie::walk_trie(std::vector<std::pair<std::string, std::string>>& result) {
+    std::function<void(std::string, Node*, std::vector<std::pair<std::string, std::string>>&)>
+        recursive = [&, this](std::string prefix, Node* node,
+                              std::vector<std::pair<std::string, std::string>>& res) {
+            if (node->is_root) {
+                if (node->endpoint) {
+                    auto& handlers = node->handlers;
+                    for (auto& it : handlers) {
+                        res.emplace_back(it.first, "/");
+                    }
+                };
+            }
+
+            Node* colon_child = node->colon_child;
+            if (colon_child) {
+                std::string p = prefix + "/:" + colon_child->name;
+                if (colon_child->endpoint) {
+                    auto& handlers = colon_child->handlers;
+                    for (auto& it : handlers) {
+                        res.emplace_back(it.first, p);
+                    }
+                }
+                recursive(p, colon_child, res);
+            }
+
+            std::vector<NodeHolder> children = node->children;
+            if (children.size() > 0) {
+                for (auto& nh : children) {
+                    if (nh.key == "") {
+                    } else {
+                        if (nh.val->endpoint) {
+                            std::string p = prefix + "/" + nh.key;
+                            auto& handlers = nh.val->handlers;
+                            for (auto& it : handlers) {
+                                res.emplace_back(it.first, p);
+                            }
+                        }
+                    }
+
+                    std::string p = prefix + "/" + nh.key;
+                    recursive(p, nh.val, res);
+                }
+            }
+        };
+
+    recursive("", root, result);
+}
+
 }  // namespace ciao

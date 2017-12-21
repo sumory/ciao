@@ -39,7 +39,6 @@ class Trie {
         _counter = 0;
     }
     ~Trie() {
-        // TODO: delete recursively
         if (root) {
             delete root;
         }
@@ -58,6 +57,9 @@ class Trie {
     std::vector<Node*> _get_pipeline(Node* node);
     Matched _match(std::string path);
     void set_segment_pattern(std::string v);
+
+    // walk tree
+    void walk_trie(std::vector<std::pair<std::string, std::string>>& result);
 };
 
 }  // namespace ciao
