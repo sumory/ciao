@@ -23,7 +23,7 @@ class Group {
     std::string name() { return _name; }
     std::vector<GroupMethodHolder> get_apis() { return _apis; }
 
-    // 挂载到path指定的group子路由上
+    // 挂载到path指定的group子路由上，不使用模板和宏，显式定义各个方法
     Group& get(const std::string& path, Middleware m) {
         _set_api("get", path, m);
         return *this;

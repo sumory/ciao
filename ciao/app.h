@@ -199,7 +199,7 @@ class App {
         return *this;
     }
 
-    // basic methods start...
+    // basic methods start...，不使用模板和宏，显式定义各个方法，方便后续重构
     App& get(const std::string& path, Middleware m) {
         router->get(path, m);
         return *this;
@@ -238,6 +238,47 @@ class App {
     }
     App& patch(const std::string& path, std::vector<Middleware> ms) {
         router->patch(path, ms);
+        return *this;
+    }
+
+    App& get(Middleware m) {
+        router->get("", m);
+        return *this;
+    }
+    App& get(std::vector<Middleware> ms) {
+        router->get("", ms);
+        return *this;
+    }
+    App& post(Middleware m) {
+        router->post("", m);
+        return *this;
+    }
+    App& post(std::vector<Middleware> ms) {
+        router->post("", ms);
+        return *this;
+    }
+    App& del(Middleware m) {
+        router->del("", m);
+        return *this;
+    }
+    App& del(std::vector<Middleware> ms) {
+        router->del("", ms);
+        return *this;
+    }
+    App& put(Middleware m) {
+        router->put("", m);
+        return *this;
+    }
+    App& put(std::vector<Middleware> ms) {
+        router->put("", ms);
+        return *this;
+    }
+    App& patch(Middleware m) {
+        router->patch("", m);
+        return *this;
+    }
+    App& patch(std::vector<Middleware> ms) {
+        router->patch("", ms);
         return *this;
     }
     // basic methods end.

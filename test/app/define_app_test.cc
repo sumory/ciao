@@ -17,6 +17,18 @@ TEST_F(AppTest, DefineAppWithParamsTest) {
     ASSERT_NE(nullptr, app.router);
 }
 
+TEST_F(AppTest, AppRootRouteTest) {
+    ciao::App app;
+    ciao::Middleware m = [](ciao::Request& req, ciao::Response& res, ciao::Next& next) {};
+    app.get(m);
+    app.post(m);
+    app.put({m,m});
+
+    ASSERT_EQ(1, app.router->trie.add_node("")->handlers["get"].size());
+    ASSERT_EQ(1, app.router->trie.add_node("")->handlers["post"].size());
+    ASSERT_EQ(2, app.router->trie.add_node("")->handlers["put"].size());
+}
+
 TEST_F(AppTest, DefineHttpMethodTest) {
     ciao::App app;
     app.get("/get", [](ciao::Request& req, ciao::Response& res, ciao::Next& next) {});
