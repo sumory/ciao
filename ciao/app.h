@@ -282,6 +282,23 @@ class App {
         return *this;
     }
     // basic methods end.
+
+    // stat
+    std::vector<std::pair<std::string, std::string>> stat() {
+        std::vector<std::pair<std::string, std::string>> result;
+        router->trie.walk_trie(result);
+        return result;
+    }
+
+    std::string text_stat() {
+        std::vector<std::pair<std::string, std::string>> result = stat();
+        std::string content;
+        for (auto& r : result) {
+            content += r.first + "\t" + r.second;
+            content += "\n";
+        }
+        return content;
+    }
 };
 
 }  // namespace ciao

@@ -1,8 +1,7 @@
-#include "ciao/api_stat.h"
-#include "ciao/utils.h"
+#include "ciao/app.h"
 #include "test/test_common.h"
 
-TEST_F(UtilsTest, ApiStatTest) {
+TEST_F(AppTest, ApiStatTest) {
     ciao::App app;
     auto mw = [](ciao::Request& req, ciao::Response& res, ciao::Next& next) {};
     app.get("/get", mw);
@@ -24,8 +23,7 @@ TEST_F(UtilsTest, ApiStatTest) {
     app.get("/article/view", mw);
     app.post("/article/modify", mw);
 
-    ciao::ApiStat api_stat(&app);
-    auto stat = api_stat.stat();
+    auto stat = app.stat();
     ASSERT_EQ(15lu, stat.size());
-    std::cout << api_stat.text_stat() << std::endl;
+    // std::cout << app.text_stat() << std::endl;
 }

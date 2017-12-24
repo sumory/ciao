@@ -5,7 +5,7 @@ project (ciao C CXX)
 # some configuration.
 set (CIAO_VERSION_MAJOR 0)
 set (CIAO_VERSION_MINOR 0)
-set (CIAO_VERSION_PATCH 1)
+set (CIAO_VERSION_PATCH 4)
 option (INJECT_BUILD_DATE "inject build date or not" ON)
 
 configure_file (
